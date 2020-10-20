@@ -1,3 +1,4 @@
+/*
 Copyright (c) 2020 Andrew C. Young
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,3 +18,32 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+use lzw::{compress, compression_ratio};
+
+use std::env;
+use std::fs::File;
+use std::io::{BufRead, BufReader, BufWriter, Write};
+
+
+fn main() -> std::io::Result<()> {
+    let input = env::args().nth(1);
+    let output = env::args().nth(2);
+
+    let mut reader: Box<dyn BufRead> = match input {
+        None => Box::new(BufReader::new(std::io::stdin())),
+        Some(filename) => Box::new(BufReader::new(File::open(filename)?)),
+    };
+
+    let mut writer: Box<dyn Write> = match output {
+        None => Box::new(BufWriter::new(std::io::stdout())),
+        Some(filename) => Box::new(BufWriter::new(File::create(filename)?)),
+    };
+
+    let (r, w) = compress(&mut reader, &mut writer, false)?;
+    let ratio = compression_ratio(r, w) as u64;
+    eprintln!("Bytes Read: {}, Bytes Written: {}, Compression Ratio: {:3} %", r, w, ratio);
+
+    Ok(())
+}

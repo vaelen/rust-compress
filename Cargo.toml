@@ -1,0 +1,21 @@
+[package]
+name = "compression"
+version = "0.1.0"
+authors = ["Andrew Young <andrew@vaelen.org>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "lzw"
+path = "src/lzw.rs"
+
+[[bin]]
+name = "compress"
+path = "src/bin/compress.rs"
+
+[[bin]]
+name = "decompress"
+path = "src/bin/decompress.rs"
+
+[dependencies]
